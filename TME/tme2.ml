@@ -1,6 +1,5 @@
 (** 
     Author: Michal Rudek
-    Etu: 2900375
     LI220 OCAML
     UPMC Paris 6 - 2013/2014
 *)
@@ -68,6 +67,7 @@ let maximum liste =
       | tete :: queue -> maximum_rec queue (max a tete) in
     maximum_rec liste (List.hd liste);;
 
+plist l;;
 maximum l;;
 
 
@@ -78,6 +78,7 @@ let max_list (l:int list) : int =
     raise (Invalid_argument "Empty list")
   else 
     List.fold_left (max) (List.hd l) l;;
+[(plist l), (plist l2), (plist l3)];;
 
 max_list l;;
 max_list l2;;
@@ -94,12 +95,13 @@ let max_array (l:int array) =
       if (l.(i) >= l.(0)) then 
 	l.(0) <- l.(i)
       done;
-  l.(0)
-;;
+  l.(0);;
 
+[(parr a1), (parr a2), (parr a3)];;
 max_array a1;;
 max_array a2;;
 max_array a3;;
+
 
 let alloarray (n:int) = 
   let a1 = Array.create n 0 in
