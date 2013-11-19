@@ -15,13 +15,13 @@ module Circle = struct
     r = circle.r ; 
     v = circle.v
   }
-    
+
   let collide cira cirb = {
-    (Point.distc cira.cen cirb.cen) <= (cira.r +. cirb.r) *. (cira.r +. cirb.r)
+    (* if distance <= r1+r2 then collided *)
   }
     
   let collide_with_any_of p plist = {
-
+    
   }
     
  }
@@ -29,11 +29,12 @@ module Circle = struct
     
 end 
 
-
+   
 (* http://ocamlsdl.sourceforge.net/doc/html/Sdlkey.html *)
 
-(* variable globale dans events let keys = (liste de couples definie a la main (touche sdlkey, bool ref))
+(* variable globale dans events let keys = (liste de couples definie a la main (touche sdlkey, bool ref)) *)
 (* Deux evenments only - pressed and unpressed 
 
 ocamlfind ocamlc -package sdl -c events.ml
 ocamlfind compiler -package list_of_packages -c file_to_compile.ml
+*)
