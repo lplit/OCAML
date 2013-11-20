@@ -1,5 +1,5 @@
 module Circle = struct 
-    
+
   type t = {
     r:float ; 
     v:float ;
@@ -11,25 +11,24 @@ module Circle = struct
     cen=cen }
 
   let move v circle = {
-    cen = Point.move v cen ; 
+    cen = Point.move v circle.cen ; 
     r = circle.r ; 
     v = circle.v }
 
   let collide cira cirb = 
     let rs = cira.r +. cirb.r in 
-    let p1 = cira.Point.cen in 
-    let p2 = cirb.Point.cen in 
+    let p1 = cira.cen in 
+    let p2 = cirb.cen in 
     
     if rs >= Point.distance p1 p2 then 
       true 
     else 
       false
   ;;
-  
+ 
   let collide_with_any_of p plist =
-    (* apply collide to any two elements of the list, fold left? *)
-    (* check the list module for an iterator *)
-    
+    List.for_all (collide p) plist;;
+  
 end
 
 (* 
@@ -38,5 +37,12 @@ end
 What's the difference between {} in functions and just defining it usually
 {} = constructors?
 How to open/reference a module?
+
+compiler output: 
+ocamlc -c geometry.ml boundingBox.ml 
+File "boundingBox.ml", line 14, characters 10-20:
+Error: Unbound module Point
+
+jeremie.salvucci@lip6.fr
 
 *)
