@@ -1,40 +1,42 @@
 module Circle = struct 
-
+    
   type t = {
     r:float ; 
     v:float ;
-    cen:Geometry.Point.t }
+    cen:Point.t }
 
   let create r v cen = {
     r=r;
     v=v;
-    cen=cen; }
+    cen=cen }
 
   let move v circle = {
     cen = Point.move v cen ; 
     r = circle.r ; 
-    v = circle.v
-  }
+    v = circle.v }
 
-  let collide cira cirb = {
-    (* if distance <= r1+r2 then collided *)
-  }
+  let collide cira cirb = 
+    let rs = cira.r +. cirb.r in 
+    let p1 = cira.Point.cen in 
+    let p2 = cirb.Point.cen in 
     
-  let collide_with_any_of p plist = {
+    if rs >= Point.distance p1 p2 then 
+      true 
+    else 
+      false
+  ;;
+  
+  let collide_with_any_of p plist =
+    (* apply collide to any two elements of the list, fold left? *)
+    (* check the list module for an iterator *)
     
-  }
-    
- }
+end
 
-    
-end 
+(* 
+==========================================================================
 
-   
-(* http://ocamlsdl.sourceforge.net/doc/html/Sdlkey.html *)
+What's the difference between {} in functions and just defining it usually
+{} = constructors?
+How to open/reference a module?
 
-(* variable globale dans events let keys = (liste de couples definie a la main (touche sdlkey, bool ref)) *)
-(* Deux evenments only - pressed and unpressed 
-
-ocamlfind ocamlc -package sdl -c events.ml
-ocamlfind compiler -package list_of_packages -c file_to_compile.ml
 *)

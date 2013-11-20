@@ -21,10 +21,17 @@ all : $(EXEC)
 $(EXEC) : $(OBJ)
 	$(OCAMLC) -o $(EXEC) $(OCAMLFLAGS) $(OBJ)
 
+$(OBJ) : $(SRC)
+	$(OCAMLC) -c $(SRC)
+
+%.mli : %.ml
+	$(OCAMLC) -i $< > $@
+
 clean : 
 	@echo Cleaning...
-	@rm -f $(EXEC)
+	@rm -f $(EXEC) .depend
 	@rm -f *.cm[iox]
+	@rm -f *.mli
 	@echo Done.
 
 # Common rules
@@ -43,10 +50,9 @@ clean :
 	$(OCAMLOPT) $(OCAMLOPTFLAGS) -c $<
 
 # Dependencies
-depend:
+.depend:
 	$(OCAMLDEP) $(INCLUDES) *.mli *.ml > .depend
 
 include .depend
-
 
 .PHONY : all clean
