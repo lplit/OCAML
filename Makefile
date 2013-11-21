@@ -145,6 +145,25 @@ $(EXEC): $(OBJS)
 # $(EXEC)-opt: $(OPTOBJS)
 #	$(CAMLOPT) -o $(EXEC) $(LIBS:.cma=.cmxa) $(OPTOBJS)
 
+# cmi - compiled object interface
+# cmo - compiled object bytecode
+# ml - source unit implementations (definitions)
+# mli - source unit interfaces (headers)
+#
+# boundingBox.ml : geometry.cmo
+#	if geometry.cmo not present, compile it
+# %.cmo : %.cmi %.ml
+#	ocamlc -c $<
+# %.cmi : %.ml
+#	ocamlc -i $< > $@	
+#
+# Order: ml -> mli -> cmo + cmi 
+# ml -> mli via ocamlc -i .ml > .mli
+# ml + mli -> cmo + cmi via ocamlc -c .mli .ml 
+# exec <- ocamlc -o <name> .cmo .cmi
+
+boundingBox.ml : geometry.cmo
+
 .SUFFIXES: .ml .mli .cmo .cmi .cmx .mll .mly 
 
 .ml.cmo:
