@@ -20,14 +20,11 @@ module Circle = struct
     let p1 = cira.cen in 
     let p2 = cirb.cen in 
     
-    if rs >= Point.distance p1 p2 then 
-      true 
-    else 
-      false
-  ;;
+    rs >= Point.distance p1 p2 then 
+;;
  
   let collide_with_any_of p plist =
-    List.for_all (collide p) plist;;
+    List.exists (collide p) plist;;
   
 end
 
