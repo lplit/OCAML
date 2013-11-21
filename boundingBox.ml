@@ -27,25 +27,3 @@ module Circle = struct
     List.exists (collide p) plist;;
   
 end
-
-(* 
-==========================================================================
-
-What's the difference between {} in functions and just defining it usually
-{} = constructors?
-How to open/reference a module?
-
-compiler output: 
-ocamlc -c geometry.ml boundingBox.ml 
-File "boundingBox.ml", line 14, characters 10-20:
-Error: Unbound module Point
-
-En compilant separement geometry d'abord puis boindingBox, j'arrive a compiler, mais le linking fail quand j'essaye de creer l'executable.
-Je dois ajouter open Geometry au debut du bindingBox, sinon il compile pas (erreur ^), une fois compile le compilateur link pas, crache "Error: Error while linking boundingBox.cmo:
-Reference to undefined global `Geometry' "
-
-
-
-jeremie.salvucci@lip6.fr
-
-*)
