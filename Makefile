@@ -1,9 +1,13 @@
+# Files
 SRC=geometry.ml boundingBox.ml events.ml
 OBJ=$(SRC:.ml=.cmo)
 EXEC=Pewpew
 
+# Compiles
 CAMLC=ocamlfind ocamlc
 
+
+# Rules
 all : $(EXEC)
 	@echo Compiling the executable \"$(EXEC)\"...
 	@if test -f $(EXEC) ; then echo Success!; else echo Something went wrong...; fi
@@ -11,9 +15,10 @@ all : $(EXEC)
 $(EXEC) : $(OBJ)
 	@$(CAMLC) -o $@ $^
 
+
 $(OBJ) : $(SRC)
-	@echo Compiling sources... 
-	@$(CAMLC) -c $?
+	@echo Compiling sources...
+	@$(CAMLC) -package sdl -c $?
 
 clean :
 	@echo Cleaning...
@@ -21,8 +26,8 @@ clean :
 	@echo Done.
 
 info : 
-	@echo "Sources : $(SRC)"
-	@echo "Objects : $(OBJ)" 
+	@echo "Sources : `ls -x *.ml`"
+	@echo "Objects : `ls -x *.cmo`" 
 	@echo "Exec    : $(EXEC)"
 
 .PHONY : all clean info

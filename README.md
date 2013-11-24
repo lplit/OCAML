@@ -1,7 +1,5 @@
 OCAML
 =====
 
-> Project
-  This will be end term project /placeholder
-  
-> TME
+UPMC 2013/14 
+LI220 - Projet / Game

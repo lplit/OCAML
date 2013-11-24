@@ -20,7 +20,7 @@ module Circle = struct
     let p1 = cira.cen in 
     let p2 = cirb.cen in 
     
-    rs >= Point.distance p1 p2 then 
+    rs >= Point.distance p1 p2
 ;;
  
   let collide_with_any_of p plist =
