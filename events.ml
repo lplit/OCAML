@@ -1,3 +1,29 @@
+type key = 
+| Up of Sdlkey.t * bool
+| Down of Sdlkey.t * bool
+| Right of Sdlkey.t * bool
+| Left  of Sdlkey.t * bool
+| Escape of Sdlkey.t * bool
+;
+
+let update = 
+match Sdlkey.t with
+| KEY_UP ->
+| KEY_DOWN ->
+| KEY_RIGHT ->
+| KEY_LEFT ->
+| KEY_ESCAPE ->
+
+
+Sdlkey.t
+
+
+
+type key
+val get_keys : unit -> Sdlkey.t list
+val update : Sdlevent.event -> unit
+val updates : Sdlevent.event list -> unit
+
    
 (* http://ocamlsdl.sourceforge.net/doc/html/Sdlkey.html
 

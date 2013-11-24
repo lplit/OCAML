@@ -26,8 +26,8 @@ clean :
 	@echo Done.
 
 info : 
-	@echo "Sources : `ls -x *.ml`"
-	@echo "Objects : `ls -x *.cmo`" 
+	@echo "Sources : $(SRC)"
+	@echo "Objects : $(OBJ)" 
 	@echo "Exec    : $(EXEC)"
 
 .PHONY : all clean info
