@@ -21,9 +21,9 @@ let update e =
   try
     match e with
     | KEYDOWN { keysym = sym } ->
-      (List.assoc e keys) := true
+      (List.assoc sym keys) := true
     | KEYUP { keysym = sym } ->
-      (List.assoc e keys) := false 
+      (List.assoc sym keys) := false 
     | _ ->
       ()
   with Not_found ->
