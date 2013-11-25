@@ -1,4 +1,5 @@
-type key = (Sdlkey.t, bool ref) list;;
+
+type key = (Sdlkey.t * bool ref) list;;
 
 (* True = key pressed, false otherwise *)
 let keys = [ (Sdlkey.KEY_UP, ref false) ; 
@@ -11,9 +12,7 @@ let keys = [ (Sdlkey.KEY_UP, ref false) ;
 
 (* List of keys pressed *)
 let get_keys = 
-  let tmp = List.filter (fun (a,b) -> !b=true) keys in 
-  List.map fst tmp
-(* List.map fst (List.filter ((a,b) -> !b=true) keys) ?? *)
+  List.map fst (List.filter (fun (a,b) -> !b=true) keys)
 ;;
 
 

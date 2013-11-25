@@ -20,6 +20,10 @@ $(OBJ) : $(SRC)
 	@echo Compiling sources...
 	@$(CAMLC) -package sdl -c $?
 
+test : $(OBJ) tests.cmo
+	ocamlc -o test $(OBJ) tests.cmo
+	sh ./test
+
 clean :
 	@echo Cleaning...
 	@rm -f *.cmo *.cmi $(EXEC)
