@@ -11,8 +11,9 @@ let keys = [ (Sdlkey.KEY_UP, ref false) ;
 
 (* List of keys pressed *)
 let get_keys = 
-  let tmp = List.filter ((a,b) -> !b=true) keys in 
+  let tmp = List.filter (fun (a,b) -> !b=true) keys in 
   List.map fst tmp
+(* List.map fst (List.filter ((a,b) -> !b=true) keys) ?? *)
 ;;
 
 
