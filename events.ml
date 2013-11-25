@@ -1,24 +1,36 @@
+
+
+type key =
+  | Up of Sdlkey.KEY_UP * bool
+  | Down of Sdlkey.KEY_DOWN * bool
+  | Right of Sdlkey.KEY_RIGHT * bool
+  | Left  of Sdlkey.KEY_LEFT * bool
+  | Escape of Sdlkey.KEY_ESCAPE * bool
+;;
+
 let keys = [ (Sdlkey.KEY_UP, false) ; 
 	     (Sdlkey.KEY_DOWN, false) ;  
 	     (Sdlkey.KEY_RIGHT, false) ; 
 	     (Sdlkey.KEY_LEFT, false) ; 
 	     (Sdlkey.KEY_ESCAPE, false) ] ;
 
-type key =
-  | Up of Sdlkey.t * bool
-  | Down of Sdlkey.t * bool
-  | Right of Sdlkey.t * bool
-  | Left  of Sdlkey.t * bool
-  | Escape of Sdlkey.t * bool
-;;
 
 let get_keys = 
   let rec loop acc = 
     match keys with 
-      | [] -> acc::[]
-      | _, true -> 
-;;	
-	
+      | [] -> acc
+      | ((Sdlkey.KEY_DOWN, true) as h)::t
+      | ((Sdlkey.KEY_RIGHT, true) as h)::t
+      | ((Sdlkey.KEY_LEFT, true) as h)::t
+      | ((Sdlkey.KEY_ESCAPE, true) as h) -> loop h::acc
+      | _::t -> acc t in 
+    keys []
+;;
+
+let update = 
+  
+
+
 val get_keys : unit -> Sdlkey.t list
 val update : Sdlevent.event -> unit
 val updates : Sdlevent.event list -> unit
