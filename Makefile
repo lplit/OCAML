@@ -1,11 +1,11 @@
 # Files
-SRC=geometry.ml boundingBox.ml events.ml
+SRC=geometry.ml boundingBox.ml events.ml graphics.ml game.ml
 OBJ=$(SRC:.ml=.cmo)
 EXEC=Pewpew
 
-# Compiles
+# Compilers
 CAMLC=ocamlfind ocamlc
-
+PKG=sdl,sdl.sdlimage,sdl.sdlttf
 
 # Rules
 all : $(EXEC)
@@ -13,20 +13,18 @@ all : $(EXEC)
 	@if test -f $(EXEC) ; then echo Success!; else echo Something went wrong...; fi
 
 $(EXEC) : $(OBJ)
-	@$(CAMLC) -o $@ $^
+	@$(CAMLC) -package $(PKG) -linkpkg -o $@ $^
 
-
-$(OBJ) : $(SRC)
+$(OBJ) : $(SRC) graphics.mli
 	@echo Compiling sources...
-	@$(CAMLC) -package sdl -c $?
+	@$(CAMLC) -package $(PKG) -c $?
 
-test : $(OBJ) tests.cmo
-	ocamlfind ocamlc -o test $(OBJ) tests.cmo
-	sh ./test
+graphics.mli : graphics.ml
+	@$(CAMLC) -package $(PKG) -c $<
 
 clean :
 	@echo Cleaning...
-	@rm -f $(OBJ) *.cmi $(EXEC)
+	@rm -f $(OBJ)
 	@echo Done.
 
 info : 
@@ -35,3 +33,12 @@ info :
 	@echo "Exec    : $(EXEC)"
 
 .PHONY : all clean info
+
+
+# ocamlfind ocamlc -c geometry.ml
+# ocamlfind ocamlc -c boundingBox.ml
+# ocamlfind ocamlc -package sdl -c events.ml
+# ocamlfind ocamlc -package sdl -c graphics.mli
+# ocamlfind ocamlc -package sdl,sdl.sdlimage,sdl.sdlttf -c graphics.ml
+# ocamlfind ocamlc -package sdl -c game.ml
+# ocamlfind ocamlc -package sdl,sdl.sdlimage,sdl.sdlttf -linkpkg -o Pewpew geometry.cmo boundingBox.cmo events.cmo graphics.cmo game.cmo

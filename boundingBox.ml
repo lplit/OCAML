@@ -3,22 +3,22 @@ module Circle = struct
   type t = {
     r:float ; 
     v:float ;
-    cen:Point.t }
+    o:Point.t }
 
-  let create r v cen = {
+  let create r v o = {
     r=r;
     v=v;
-    cen=cen }
+    o=o }
 
   let move v circle = {
-    cen = Point.move v circle.cen ; 
+    o = Point.move v circle.o ; 
     r = circle.r ; 
     v = circle.v }
 
   let collide cira cirb = 
     let rs = cira.r +. cirb.r in 
-    let p1 = cira.cen in 
-    let p2 = cirb.cen in 
+    let p1 = cira.o in 
+    let p2 = cirb.o in 
     
     rs >= Point.distance p1 p2
 ;;
