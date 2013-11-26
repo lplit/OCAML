@@ -26,8 +26,5 @@ module Point = struct
 
   let distance a b =
     (a.x -. b.x)**2. +. (a.y -. b.y)**2.;;
-  
-  let distancepoints (ax:float) (ay:float) (bx:float) (by:float) =
-    (ax -. bx)**2. +. (ay -. by)**2.;;
 
 end
