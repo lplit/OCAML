@@ -1,3 +1,4 @@
+open Sdlevent;;
 
 type key = (Sdlkey.t * bool ref) list;;
 

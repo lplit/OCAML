@@ -21,12 +21,12 @@ $(OBJ) : $(SRC)
 	@$(CAMLC) -package sdl -c $?
 
 test : $(OBJ) tests.cmo
-	ocamlc -o test $(OBJ) tests.cmo
+	ocamlfind ocamlc -o test $(OBJ) tests.cmo
 	sh ./test
 
 clean :
 	@echo Cleaning...
-	@rm -f *.cmo *.cmi $(EXEC)
+	@rm -f $(OBJ) *.cmi $(EXEC)
 	@echo Done.
 
 info : 
