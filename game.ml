@@ -1,41 +1,19 @@
 open Graphics
 open Geometry
-module G = (val (init ()) : G) 
+open BoundingBox
+
+module G = (val (init ()) : G)
 
 type state = { 
   p : BoundingBox.Circle.t } 
 
 (* Global variables *) 
-let player = state.p ; 
-let mv_left:Vector.t = Vector.create -5 0 ;
-let mv_right = Vector.create 5 0 ;
-let mv_down = Vector.create 0 5 ;
-let mv_up = Vector.create 0 -5 ;
-
+let (mv_left:Vector.t) = Vector.create -5. 0.
+let (mv_right:Vector.t) = Vector.create 5. 0. 
+let (mv_down:Vector.t) = Vector.create 0. 5. 
+let (mv_up:Vector.t) = Vector.create 0. -5. 
+		      
 (* Functions *)
-
-(* gere les if key pressed = move key then call move_player, 
-   ignore rest, escape quits, space shoots, s shows score *)
-let update (key:Sdlkey.t) (state:state) : state =
-  match key with 
-  | Sdlkey.KEY_UP
-  | Sdlkey.KEY_DOWN
-  | Sdlkey.KEY_RIGHT
-  | Sdlkey.KEY_LEFT -> move_player key state
-  | Sdlkey.KEY_ESCAPE -> G.quit() 
-  | Sdlkey.KEY_SPACE -> state ; 
-
-
-let display () =
-    G.flip() ;
-
-
-let play () =
-  while true do 
-    updates()
-    display()
-  done ;
-
 
 (* Key + state(player) -> player with modfied position *)
 let move_player (key:Sdlkey.t) (state:state) : state = 
@@ -46,13 +24,34 @@ let move_player (key:Sdlkey.t) (state:state) : state =
   | Sdlkey.KEY_RIGHT -> Circle.move mv_right state.p
   | Sdlkey.KEY_LEFT -> Circle.move mv_left state.p
   | _ -> state
-;
+
+(* if key pressed = move key then call move_player, 
+   ignore rest, escape quits, space shoots *)
+let update (key:Sdlkey.t) (state:state) : state =
+  match key with 
+  | Sdlkey.KEY_UP
+  | Sdlkey.KEY_DOWN
+  | Sdlkey.KEY_RIGHT
+  | Sdlkey.KEY_LEFT -> move_player key state
+  | Sdlkey.KEY_ESCAPE -> G.quit() 
+  | Sdlkey.KEY_SPACE -> state
+
+let display () =
+    G.flip() 
+
+let play () =
+  while true do 
+    updates();
+    display()
+  done
+
+
 
 
 (* gets all the pressed keys (events) , calls update on all the keys *)
 let updates (state:state) : state = 
-  List.iter update Events.get_keys () 
-;
+  List.iter update Events.get_keys
+
 
 (*
 module type G =

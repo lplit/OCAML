@@ -1,11 +1,10 @@
 module Vector = struct 
-
   type t = { 
     x:float ; 
     y:float }
       
-  let create a b = { 
-    x=a ; 
+  let create (a:float) (b:float) = { 
+    x=a ;
     y=b }
   
 end 
