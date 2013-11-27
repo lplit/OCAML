@@ -6,6 +6,7 @@ type state = {
   p : BoundingBox.Circle.t } 
 
 (* Global variables *) 
+let player = state.p ; 
 let mv_left:Vector.t = Vector.create -5 0 ;
 let mv_right = Vector.create 5 0 ;
 let mv_down = Vector.create 0 5 ;
@@ -22,18 +23,18 @@ let update (key:Sdlkey.t) (state:state) : state =
   | Sdlkey.KEY_RIGHT
   | Sdlkey.KEY_LEFT -> move_player key state
   | Sdlkey.KEY_ESCAPE -> G.quit() 
-  | Sdlkey.KEY_SPACE -> state 
+  | Sdlkey.KEY_SPACE -> state ; 
 
 
 let display () =
-    G.flip()
+    G.flip() ;
 
 
 let play () =
   while true do 
     updates()
     display()
-  done
+  done ;
 
 
 (* Key + state(player) -> player with modfied position *)
@@ -45,14 +46,13 @@ let move_player (key:Sdlkey.t) (state:state) : state =
   | Sdlkey.KEY_RIGHT -> Circle.move mv_right state.p
   | Sdlkey.KEY_LEFT -> Circle.move mv_left state.p
   | _ -> state
-
+;
 
 
 (* gets all the pressed keys (events) , calls update on all the keys *)
 let updates (state:state) : state = 
   List.iter update Events.get_keys () 
-
-
+;
 
 (*
 module type G =
@@ -75,4 +75,3 @@ module type G =
 val init : unit -> (module G)
 val quit : unit -> unit
 *)
-
