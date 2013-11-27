@@ -13,18 +13,22 @@ all : $(EXEC)
 	@if test -f $(EXEC) ; then echo Success!; else echo Something went wrong...; fi
 
 $(EXEC) : $(OBJ)
-	@$(CAMLC) -package $(PKG) -linkpkg -o $@ $^
+	@echo Linking...
+	$(CAMLC) -package $(PKG) -linkpkg -o $@ $^
 
-$(OBJ) : $(SRC) graphics.mli
+$(OBJ) : $(SRC)
 	@echo Compiling sources...
-	@$(CAMLC) -package $(PKG) -c $?
+	$(CAMLC) -package $(PKG) -c $?
+
+graphics.cmi : graphics.mli
+	$(CAMLC) -package $(PKG) -c $<
 
 graphics.mli : graphics.ml
-	@$(CAMLC) -package $(PKG) -c $<
+	$(OCAMLC) -i graphics.mli
 
 clean :
 	@echo Cleaning...
-	@rm -f $(OBJ)
+	@rm -f $(OBJ) $(EXEC)
 	@echo Done.
 
 info : 
