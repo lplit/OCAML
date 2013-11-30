@@ -12,13 +12,13 @@ let keys = [ (Sdlkey.KEY_UP, ref false) ;
 
 
 (* List of keys pressed *)
-let get_keys = 
+let get_keys () : (Sdlkey.t list) = 
   List.map fst (List.filter (fun (a,b) -> !b=true) keys)
 ;;
 
 
-(* Updates keypress *)
-let update e =
+(* Updates 1 keypress *)
+let update (e:Sdlevent.event) =
   try
     match e with
     | KEYDOWN { keysym = sym } ->
@@ -31,7 +31,7 @@ let update e =
     ()
 ;;
 
-      
+(* Updates all the keys' pressed state *)
 let updates (evlist:Sdlevent.event list) = 
   List.iter update evlist
 ;;

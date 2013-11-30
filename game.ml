@@ -44,17 +44,26 @@ let display () =
     G.flip () 
 
 
-(* gets all the pressed keys (events) , calls update on all the keys *)
-let updates (state:state) : state = 
-  List.fold_left (update state) Events.get_keys
+(* gets all the pressed keys (Sdlevent.event list) , calls update on all the keys *)
+let updates (st:state) : state = 
+  let keys_p = Events.get_keys () in
+  List.fold_left (fun (a:Sdlkey.t) -> update a st) Sdlkey.KEY_F1 keys_p
+
+(*
+  File "game.ml", line 50, characters 38-49:
+  Error: This expression has type state but an expression was expected of type
+  'a -> Sdlkey.t
+  make: *** [geometry.cmo] Error 2
+  
+*)
 
 let p1 = Circle.create 10 1 1
 
-let play () =
+let play st  =
   while true do 
     updates ();
     display ();
-    G.player p1
+    G.player st.p 
       
   done
 
