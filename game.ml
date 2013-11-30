@@ -8,23 +8,26 @@ type state = {
   p : BoundingBox.Circle.t } 
 
 (* Global variables *) 
-let (mv_left:Vector.t) = Vector.create -5. 0.
+let (mv_left:Vector.t) = Vector.create (-5.) 0.
 let (mv_right:Vector.t) = Vector.create 5. 0. 
 let (mv_down:Vector.t) = Vector.create 0. 5. 
-let (mv_up:Vector.t) = Vector.create 0. -5. 
+let (mv_up:Vector.t) = Vector.create 0. (-5.)
 		      
 (* Functions *)
 
 (* Key + state(player) -> player with modfied position *)
 let move_player (key:Sdlkey.t) (state:state) : state = 
-  match key with 
-  (* Move v:vector c:circle *)
-  | Sdlkey.KEY_UP -> Circle.move mv_up state.p
-  | Sdlkey.KEY_DOWN -> Circle.move mv_down state.p
-  | Sdlkey.KEY_RIGHT -> Circle.move mv_right state.p
-  | Sdlkey.KEY_LEFT -> Circle.move mv_left state.p
+  match key with
+  | Sdlkey.KEY_UP ->
+    let a={p=Circle.move mv_up state.p} in a
+  | Sdlkey.KEY_DOWN -> 
+    let a={p=Circle.move mv_down state.p} in a 
+  | Sdlkey.KEY_RIGHT -> 
+    let a={p=Circle.move mv_right state.p} in a 
+  | Sdlkey.KEY_LEFT -> 
+    let a={p=Circle.move mv_left state.p} in a
   | _ -> state
-
+      
 (* if key pressed = move key then call move_player, 
    ignore rest, escape quits, space shoots *)
 let update (key:Sdlkey.t) (state:state) : state =
@@ -33,25 +36,27 @@ let update (key:Sdlkey.t) (state:state) : state =
   | Sdlkey.KEY_DOWN
   | Sdlkey.KEY_RIGHT
   | Sdlkey.KEY_LEFT -> move_player key state
-  | Sdlkey.KEY_ESCAPE -> G.quit() 
+  | Sdlkey.KEY_ESCAPE -> Graphics.quit () ; state
   | Sdlkey.KEY_SPACE -> state
+  | _ -> state
 
 let display () =
-    G.flip() 
-
-let play () =
-  while true do 
-    updates();
-    display()
-  done
-
-
+    G.flip () 
 
 
 (* gets all the pressed keys (events) , calls update on all the keys *)
 let updates (state:state) : state = 
-  List.iter update Events.get_keys
+  List.fold_left (update state) Events.get_keys
 
+let p1 = Circle.create 10 1 1
+
+let play () =
+  while true do 
+    updates ();
+    display ();
+    G.player p1
+      
+  done
 
 (*
 module type G =
