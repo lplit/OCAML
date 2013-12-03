@@ -47,7 +47,6 @@ let cir1 = Circle.create 10. 10. pt1
 let player= {p=cir1}
 
 let display () =
-  G.player player.p ;
   G.flip () 
 
 
@@ -59,9 +58,7 @@ let updates (st:state) : state =
 
 let play () =
   while true do 
-    display ();
-    updates player ; 
-    G.player player.p
+    G.score 50 ; 
   done
 
 
