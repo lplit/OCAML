@@ -60,7 +60,7 @@ let updates (st:state) : state =
 let play () =
   while true do 
     display ();
-    player <- updates player;
+    updates player ; 
     G.player player.p
   done
 
