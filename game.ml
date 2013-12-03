@@ -5,7 +5,8 @@ open BoundingBox
 module G = (val (init ()) : G)
 
 type state = { 
-  p : BoundingBox.Circle.t } 
+  p : BoundingBox.Circle.t ;
+}
 
 (* Global variables *) 
 let (mv_left:Vector.t) = Vector.create (-5.) 0.
@@ -19,7 +20,7 @@ let (mv_up:Vector.t) = Vector.create 0. (-5.)
 let move_player (key:Sdlkey.t) (state:state) : state = 
   match key with
   | Sdlkey.KEY_UP ->
-    let a={p=Circle.move mv_up state.p} in a
+    let (a:state)={p=Circle.move mv_up state.p} in a
   | Sdlkey.KEY_DOWN -> 
     let a={p=Circle.move mv_down state.p} in a 
   | Sdlkey.KEY_RIGHT -> 
@@ -36,36 +37,33 @@ let update (key:Sdlkey.t) (state:state) : state =
   | Sdlkey.KEY_DOWN
   | Sdlkey.KEY_RIGHT
   | Sdlkey.KEY_LEFT -> move_player key state
-  | Sdlkey.KEY_ESCAPE -> Graphics.quit () ; state
+  | Sdlkey.KEY_ESCAPE -> state
   | Sdlkey.KEY_SPACE -> state
   | _ -> state
 
+
+let pt1= Point.create 1. 1. 
+let cir1 = Circle.create 10. 10. pt1 
+let player= {p=cir1}
+
 let display () =
-    G.flip () 
+  G.player player.p ;
+  G.flip () 
 
 
 (* gets all the pressed keys (Sdlevent.event list) , calls update on all the keys *)
 let updates (st:state) : state = 
   let keys_p = Events.get_keys () in
-  List.fold_left (fun (a:Sdlkey.t) -> update a st) Sdlkey.KEY_F1 keys_p
+  List.fold_left (fun acc k -> update k acc) st keys_p
 
-(*
-  File "game.ml", line 50, characters 38-49:
-  Error: This expression has type state but an expression was expected of type
-  'a -> Sdlkey.t
-  make: *** [geometry.cmo] Error 2
-  
-*)
 
-let p1 = Circle.create 10 1 1
-
-let play st  =
+let play () =
   while true do 
-    updates ();
     display ();
-    G.player st.p 
-      
+    player <- updates player;
+    G.player player.p
   done
+
 
 (*
 module type G =
