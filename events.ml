@@ -12,9 +12,9 @@ let keys = [ (Sdlkey.KEY_UP, ref false) ;
 
 
 (* List of keys pressed *)
-let get_keys () : (Sdlkey.t list) = 
+let get_keys () : (Sdlkey.t list) =
   List.map fst (List.filter (fun (a,b) -> !b=true) keys)
-;;
+  ;;
 
 
 (* Updates 1 keypress *)

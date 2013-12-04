@@ -7,6 +7,8 @@ module G = (val (init ()) : G)
 type state = { 
   p : BoundingBox.Circle.t ;
 }
+let print_pressed_keys (l:Sdlkey.t list) =
+  List.map (fun a -> Sdlkey.name a ) l
   
 let cr_state x y r v  = 
   { p = Circle.create r v (Point.create x y) }
@@ -36,12 +38,12 @@ let move_player (key:Sdlkey.t) (state:state) : state =
 (* if key pressed = move key then call move_player, 
    ignore rest, escape quits, space shoots *)
 let update (key:Sdlkey.t) (state:state) : state =
-  Printf.printf "Update called\n" ; 
+(*  Printf.printf "Update called\n" ; *)
   match key with 
-  | Sdlkey.KEY_UP
-  | Sdlkey.KEY_DOWN
-  | Sdlkey.KEY_RIGHT
-  | Sdlkey.KEY_LEFT -> Printf.printf "Moving\n" ; move_player key state
+  | Sdlkey.KEY_UP -> Printf.printf "Going up\n" ; move_player key state
+  | Sdlkey.KEY_DOWN -> Printf.printf "Going down\n" ; move_player key state
+  | Sdlkey.KEY_RIGHT -> Printf.printf "Going right\n" ; move_player key state
+  | Sdlkey.KEY_LEFT -> Printf.printf "Going left\n" ; move_player key state
   | Sdlkey.KEY_ESCAPE -> Graphics.quit () ; state
   | Sdlkey.KEY_SPACE -> state
   | _ -> state
@@ -49,7 +51,7 @@ let update (key:Sdlkey.t) (state:state) : state =
 
 (* gets all the pressed keys (Sdlevent.event list) , calls update on all the keys *)
 let updates (st:state) : state = 
-  Printf.printf "Updates called\n" ; 
+(*  Printf.printf "Updates called\n" ; *)
   let keys_p = Events.get_keys () in
   List.fold_left (fun acc k -> update k acc) st keys_p
 
@@ -58,18 +60,11 @@ let display (pl:state) =
   G.flip () ;
   G.player pl.p
 
-(* 
+
 let play () =
   let state = ref initial_state in
   while true do
-    state := updates !state;
-    refresh !state;
-  done
-*) 
-
-let play () =
-  let state = ref initial_state in 
-  while true do
+    print_pressed_keys (Events.get_keys ()) ;
     state := updates !state;
     display !state
   done
