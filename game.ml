@@ -12,11 +12,12 @@ let cr_state x y r v  =
   { p = Circle.create r v (Point.create x y) }
     
 (* Global variables *) 
-let (mv_left:Vector.t) = Vector.create (-5.) 0.
-let (mv_right:Vector.t) = Vector.create 5. 0. 
-let (mv_down:Vector.t) = Vector.create 0. 5. 
-let (mv_up:Vector.t) = Vector.create 0. (-5.)
-		      
+let (mv_left:Vector.t) = Vector.create (-15.) 0.
+let (mv_right:Vector.t) = Vector.create 15. 0. 
+let (mv_down:Vector.t) = Vector.create 0. 15. 
+let (mv_up:Vector.t) = Vector.create 0. (-15.)
+let (initial_state:state) = cr_state 400. 550. 10. 10.
+
 (* Functions *)
 
 (* Key + state(player) -> player with modfied position *)
@@ -35,6 +36,7 @@ let move_player (key:Sdlkey.t) (state:state) : state =
 (* if key pressed = move key then call move_player, 
    ignore rest, escape quits, space shoots *)
 let update (key:Sdlkey.t) (state:state) : state =
+  Printf.printf "Update called\n" ; 
   match key with 
   | Sdlkey.KEY_UP
   | Sdlkey.KEY_DOWN
@@ -47,24 +49,29 @@ let update (key:Sdlkey.t) (state:state) : state =
 
 (* gets all the pressed keys (Sdlevent.event list) , calls update on all the keys *)
 let updates (st:state) : state = 
+  Printf.printf "Updates called\n" ; 
   let keys_p = Events.get_keys () in
   List.fold_left (fun acc k -> update k acc) st keys_p
 
 
-let display () =
-  let p1 = cr_state 20. 20. 10. 10. in 
-  let player = ref p1 in 
+let display (pl:state) =
   G.flip () ;
-  G.player player.p;
-  player = updates p1
+  G.player pl.p
 
-(* Tu crées un nouvel état avec { p = ton nouveau player } et ta boucle while peut
-utiliser une ref vers un état que tu mets à jour au fur et à mesure.
-
-Ou alors tu fais une fonction récursive avec un accumulateur pour l'état. *)
+(* 
 let play () =
+  let state = ref initial_state in
   while true do
-    display () 
+    state := updates !state;
+    refresh !state;
+  done
+*) 
+
+let play () =
+  let state = ref initial_state in 
+  while true do
+    state := updates !state;
+    display !state
   done
 
 let _ = play () 
