@@ -57,10 +57,10 @@ let updates (st:state) : state =
 
 
 let display (pl:state) =
-  G.flip () ;
+  G.clean () ; 
   G.player pl.p ;
-  G.delay 30
-
+  G.delay 30 ;
+  G.flip ()
 
 let refresh (a: state ref ) = 
   let keys = Sdlevent.get 5 in 
