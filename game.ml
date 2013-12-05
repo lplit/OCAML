@@ -19,7 +19,7 @@ let (mv_right:Vector.t) = Vector.create 15. 0.
 let (mv_down:Vector.t) = Vector.create 0. 15. 
 let (mv_up:Vector.t) = Vector.create 0. (-15.)
 let (initial_state:state) = cr_state 400. 550. 10. 10.
-let go_on = ref true
+let (go_on: bool ref)  = ref true
 
 
 (* Functions *)
@@ -28,24 +28,23 @@ let go_on = ref true
 let move_player (key:Sdlkey.t) (state:state) : state = 
   match key with
   | Sdlkey.KEY_UP ->
-    let (a:state)={p=Circle.move mv_up state.p} in Printf.printf "Up\n" ;  a
+    let (a:state)={p=Circle.move mv_up state.p} in a
   | Sdlkey.KEY_DOWN -> 
-    let a={p=Circle.move mv_down state.p} in Printf.printf "Down\n" ; a 
+    let a={p=Circle.move mv_down state.p} in a 
   | Sdlkey.KEY_RIGHT -> 
-    let a={p=Circle.move mv_right state.p} in Printf.printf "Right\n" ; a 
+    let a={p=Circle.move mv_right state.p} in a 
   | Sdlkey.KEY_LEFT -> 
-    let a={p=Circle.move mv_left state.p} in Printf.printf "Left\n" ; a
+    let a={p=Circle.move mv_left state.p} in a
   | _ -> state
       
 (* if key pressed = move key then call move_player, 
    ignore rest, escape quits, space shoots *)
 let update (key:Sdlkey.t) (state:state) : state =
-(*  Printf.printf "Update called\n" ; *)
   match key with 
-  | Sdlkey.KEY_UP -> Printf.printf "Going up\n" ; move_player key state
-  | Sdlkey.KEY_DOWN -> Printf.printf "Going down\n" ; move_player key state
-  | Sdlkey.KEY_RIGHT -> Printf.printf "Going right\n" ; move_player key state
-  | Sdlkey.KEY_LEFT -> Printf.printf "Going left\n" ; move_player key state
+  | Sdlkey.KEY_UP -> move_player key state
+  | Sdlkey.KEY_DOWN -> move_player key state
+  | Sdlkey.KEY_RIGHT -> move_player key state
+  | Sdlkey.KEY_LEFT -> move_player key state
   | Sdlkey.KEY_ESCAPE -> go_on := false ; state
   | Sdlkey.KEY_SPACE -> state
   | _ -> state
@@ -53,7 +52,6 @@ let update (key:Sdlkey.t) (state:state) : state =
 
 (* gets all the pressed keys (Sdlevent.event list) , calls update on all the keys *)
 let updates (st:state) : state = 
-(*  Printf.printf "Updates called\n" ; *)
   let keys_p = Events.get_keys () in
   List.fold_left (fun acc k -> update k acc) st keys_p
 
@@ -63,10 +61,12 @@ let display (pl:state) =
   G.player pl.p ;
   G.delay 30
 
+
 let refresh (a: state ref ) = 
   let keys = Sdlevent.get 5 in 
   Events.updates keys ; 
   a := updates !a
+
 
 let play () =
   let state = ref initial_state in
@@ -76,6 +76,7 @@ let play () =
   done ;
   Graphics.quit ()
     
+
 let _ = play () 
 
 (*
