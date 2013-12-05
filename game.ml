@@ -19,7 +19,7 @@ let (mv_right:Vector.t) = Vector.create 15. 0.
 let (mv_down:Vector.t) = Vector.create 0. 15. 
 let (mv_up:Vector.t) = Vector.create 0. (-15.)
 let (initial_state:state) = cr_state 400. 550. 10. 10.
-
+let go_on = ref true
 
 
 (* Functions *)
@@ -46,7 +46,7 @@ let update (key:Sdlkey.t) (state:state) : state =
   | Sdlkey.KEY_DOWN -> Printf.printf "Going down\n" ; move_player key state
   | Sdlkey.KEY_RIGHT -> Printf.printf "Going right\n" ; move_player key state
   | Sdlkey.KEY_LEFT -> Printf.printf "Going left\n" ; move_player key state
-  | Sdlkey.KEY_ESCAPE -> Graphics.quit () ; state
+  | Sdlkey.KEY_ESCAPE -> go_on := false ; state
   | Sdlkey.KEY_SPACE -> state
   | _ -> state
 
@@ -70,11 +70,12 @@ let refresh (a: state ref ) =
 
 let play () =
   let state = ref initial_state in
-  while true do
+  while !go_on do
     refresh state ;
     display !state
-  done
-
+  done ;
+  Graphics.quit ()
+    
 let _ = play () 
 
 (*
