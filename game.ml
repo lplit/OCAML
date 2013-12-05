@@ -20,6 +20,8 @@ let (mv_down:Vector.t) = Vector.create 0. 15.
 let (mv_up:Vector.t) = Vector.create 0. (-15.)
 let (initial_state:state) = cr_state 400. 550. 10. 10.
 
+
+
 (* Functions *)
 
 (* Key + state(player) -> player with modfied position *)
@@ -58,14 +60,18 @@ let updates (st:state) : state =
 
 let display (pl:state) =
   G.flip () ;
-  G.player pl.p
+  G.player pl.p ;
+  G.delay 30
 
+let refresh (a: state ref ) = 
+  let keys = Sdlevent.get 5 in 
+  Events.updates keys ; 
+  a := updates !a
 
 let play () =
   let state = ref initial_state in
   while true do
-    print_pressed_keys (Events.get_keys ()) ;
-    state := updates !state;
+    refresh state ;
     display !state
   done
 

@@ -10,13 +10,6 @@ let keys = [ (Sdlkey.KEY_UP, ref false) ;
 	     (Sdlkey.KEY_SPACE, ref false) ; 
 	     (Sdlkey.KEY_ESCAPE, ref false) ] ;;
 
-
-(* List of keys pressed *)
-let get_keys () : (Sdlkey.t list) =
-  List.map fst (List.filter (fun (a,b) -> !b=true) keys)
-  ;;
-
-
 (* Updates 1 keypress *)
 let update (e:Sdlevent.event) =
   try
@@ -35,3 +28,9 @@ let update (e:Sdlevent.event) =
 let updates (evlist:Sdlevent.event list) = 
   List.iter update evlist
 ;;
+
+(* List of keys pressed *)
+let get_keys () : (Sdlkey.t list) =
+  List.map fst (List.filter (fun (a,b) -> !b=true) keys)
+  ;;
+
