@@ -9,6 +9,12 @@ module Circle = struct
     r=r;
     v=v;
     o=o }
+    
+    
+  let create_cir c = { 
+    r = c.r ; 
+    v = c.v ; 
+    o = c.o }
 
   let move v circle = {
     o = Point.move v circle.o ; 

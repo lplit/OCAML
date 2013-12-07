@@ -4,14 +4,18 @@ open BoundingBox
 
 module G = (val (init ()) : G)
   
-type state = { 
-  p : BoundingBox.Circle.t ;
-}
+type state = 
+  { p : BoundingBox.Circle.t ;
+    m : BoundingBox.Circle.t list 
+  }
+  
 let print_pressed_keys (l:Sdlkey.t list) =
   List.map (fun a -> Sdlkey.name a ) l
-  
+    
 let cr_state x y r v  = 
-  { p = Circle.create r v (Point.create x y) }
+  { p = Circle.create r v (Point.create x y) ;
+    m = [] 
+  }
     
 (* Global variables *) 
 let (mv_left:Vector.t) = Vector.create (-15.) 0.
@@ -24,18 +28,40 @@ let (go_on: bool ref)  = ref true
 
 (* Functions *)
 
-(* Key + state(player) -> player with modfied position *)
+(* Adds new shoot to the list, coords: actual coords of ship *)
+let add_shoot (state:state) : state = 
+  let (c:Circle.t)=Circle.create 5. 5. state.p.o in 
+  let a ={ p=state.p; m=(state.m::c) } in
+  a
+
+(* Checks if c is outside of the drawing zone *)
+let c_outta_box (c:Circle.t) : bool = 
+  c.o.Point.x > 800. or c.o.x < 0. or c.o.y > 600. or c.o.y < 0.
+
+(* Takes the first shot out from the list if it is outside the drawbox *)
+let clean_shots_out (state:state) : state =
+  if c_outta_box (List.hd state.m) then 
+    let a = {p=state.p ; m=List.tl state.m} in a
+  else 
+    state
+
+(* Moves all the shots within the drawbox *)
+let move_shots (state:state) : state = 
+  let updated = clean_shots_out state in 
+  List.iter (fun a -> Circle.move mv_up a) updated.m;
+  updated
+
 let move_player (key:Sdlkey.t) (state:state) : state = 
-  match key with
-  | Sdlkey.KEY_UP ->
-    let (a:state)={p=Circle.move mv_up state.p} in a
-  | Sdlkey.KEY_DOWN -> 
-    let a={p=Circle.move mv_down state.p} in a 
-  | Sdlkey.KEY_RIGHT -> 
-    let a={p=Circle.move mv_right state.p} in a 
-  | Sdlkey.KEY_LEFT -> 
-    let a={p=Circle.move mv_left state.p} in a
-  | _ -> state
+  if c_outta_box state.p then 
+    state
+  else 
+    match key with
+    | Sdlkey.KEY_UP -> let (a:state)={p=Circle.move mv_up state.p ; m=state.m} in a
+    | Sdlkey.KEY_DOWN -> let (a:state)={p=Circle.move mv_down state.p ; m=state.m} in a 
+    | Sdlkey.KEY_RIGHT -> let (a:state)={p=Circle.move mv_right state.p ; m=state.m} in a 
+    | Sdlkey.KEY_LEFT -> let (a:state)={p=Circle.move mv_left state.p ; m=state.m} in a
+    | _ -> state
+      
       
 (* if key pressed = move key then call move_player, 
    ignore rest, escape quits, space shoots *)
@@ -46,7 +72,7 @@ let update (key:Sdlkey.t) (state:state) : state =
   | Sdlkey.KEY_RIGHT -> move_player key state
   | Sdlkey.KEY_LEFT -> move_player key state
   | Sdlkey.KEY_ESCAPE -> go_on := false ; state
-  | Sdlkey.KEY_SPACE -> state
+  | Sdlkey.KEY_SPACE -> add_shoot state 
   | _ -> state
 
 
@@ -61,6 +87,7 @@ let display (pl:state) =
   G.player pl.p ;
   G.delay 30 ;
   G.flip ()
+
 
 let refresh (a: state ref ) = 
   let keys = Sdlevent.get 5 in 
