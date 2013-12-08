@@ -6,7 +6,7 @@ module G = (val (init ()) : G)
   
 type state = 
   { p : BoundingBox.Circle.t ;
-    m : BoundingBox.Circle.t list 
+    m : BoundingBox.Circle.t list
   }
   
 let print_pressed_keys (l:Sdlkey.t list) =
@@ -31,25 +31,48 @@ let (go_on: bool ref)  = ref true
 (* Adds new shoot to the list, coords: actual coords of ship *)
 let add_shoot (state:state) : state = 
   let (c:Circle.t)=Circle.create 5. 5. state.p.o in 
-  let a ={ p=state.p; m=(state.m::c) } in
-  a
+  match state.m with 
+  | [] -> let a = {p=state.p ; m=[c] } in a
+  | _ -> 
+    let ls = c::state.m in
+    let a = {p=state.p ; m = List.rev ls } in 
+    a 
 
 (* Checks if c is outside of the drawing zone *)
 let c_outta_box (c:Circle.t) : bool = 
-  c.o.Point.x > 800. or c.o.x < 0. or c.o.y > 600. or c.o.y < 0.
+  c.o.Point.x > 800. || c.o.x < 0. || c.o.y > 600. || c.o.y < 0.
 
-(* Takes the first shot out from the list if it is outside the drawbox *)
+(* Removes shots from oustide the drawbox *)
 let clean_shots_out (state:state) : state =
-  if c_outta_box (List.hd state.m) then 
-    let a = {p=state.p ; m=List.tl state.m} in a
-  else 
-    state
-
+  let shots = state.m in 
+  let rec loop acc l = 
+    match l with 
+    | [] -> acc
+    | h::t ->  if c_outta_box h then 
+	loop (h::acc) t
+      else 
+	loop acc t
+  in 
+  let a = { p=state.p ; m=loop [] shots } in
+  a 
+    
 (* Moves all the shots within the drawbox *)
 let move_shots (state:state) : state = 
-  let updated = clean_shots_out state in 
-  List.iter (fun a -> Circle.move mv_up a) updated.m;
-  updated
+  let newp = clean_shots_out state in
+  let shots = List.map (fun a -> Circle.move mv_up a) newp.m in 
+  let a = {p=state.p ; m=shots} in 
+  a
+    
+(* val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b list -> 'a
+List.fold_left f a [b1; ...; bn] is f (... (f (f a b1) b2) ...) bn. 
+
+let updates (st:state) : state = 
+  let keys_p = Events.get_keys () in
+  List.fold_left (fun acc k -> update k acc) st keys_p
+*)
+
+let draw_bullets (player:state) : unit = 
+  List.iter G.bullet player.m
 
 let move_player (key:Sdlkey.t) (state:state) : state = 
   if c_outta_box state.p then 
@@ -99,12 +122,15 @@ let play () =
   let state = ref initial_state in
   while !go_on do
     refresh state ;
+    move_shots !state ; 
     display !state
   done ;
   Graphics.quit ()
     
 
 let _ = play () 
+
+
 
 (*
 module type G =
