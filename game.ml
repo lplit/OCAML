@@ -64,11 +64,13 @@ let move_shots (state:state) : state =
   a
 
 let draw_bullets (player:state) : unit = 
-  List.iter G.bullet player.m
+  let newp = move_shots player in 
+  List.iter G.bullet newp.m
 
 let move_player (key:Sdlkey.t) (state:state) : state = 
-  if c_outta_box state.p then 
-    state
+  if c_outta_box state.p then
+    match state.p with
+      
   else 
     match key with
     | Sdlkey.KEY_UP -> let (a:state)={p=Circle.move mv_up state.p ; m=state.m} in a
@@ -113,7 +115,6 @@ let refresh (a: state ref ) =
 let play () =
   let state = ref initial_state in
   while !go_on do
-    move_shots !state ; 
     refresh state ;
     Printf.printf "%d\n" (List.length !state.m) ;
     display !state
