@@ -29,7 +29,7 @@ let (go_on: bool ref)  = ref true
 (* Functions *)
 
 (* Adds new shoot to the list, coords: actual coords of ship *)
-let add_shoot (state:state) : state = 
+let add_shot (state:state) : state = 
   let (c:Circle.t)=Circle.create 5. 5. state.p.o in 
   match state.m with 
   | [] -> let a = {p=state.p ; m=[c] } in a
@@ -44,7 +44,6 @@ let c_outta_box (c:Circle.t) : bool =
 
 (* Removes shots from oustide the drawbox *)
 let clean_shots_out (state:state) : state =
-  let shots = state.m in 
   let rec loop acc l = 
     match l with 
     | [] -> acc
@@ -52,8 +51,9 @@ let clean_shots_out (state:state) : state =
 	loop (h::acc) t
       else 
 	loop acc t
-  in 
-  let a = { p=state.p ; m=loop [] shots } in
+  in
+  let new_shots = loop [] state.m in 
+  let a = { p=state.p ; m=new_shots } in
   a 
     
 (* Moves all the shots within the drawbox *)
@@ -62,14 +62,6 @@ let move_shots (state:state) : state =
   let shots = List.map (fun a -> Circle.move mv_up a) newp.m in 
   let a = {p=state.p ; m=shots} in 
   a
-    
-(* val fold_left : ('a -> 'b -> 'a) -> 'a -> 'b list -> 'a
-List.fold_left f a [b1; ...; bn] is f (... (f (f a b1) b2) ...) bn. 
-
-let updates (st:state) : state = 
-  let keys_p = Events.get_keys () in
-  List.fold_left (fun acc k -> update k acc) st keys_p
-*)
 
 let draw_bullets (player:state) : unit = 
   List.iter G.bullet player.m
@@ -95,7 +87,7 @@ let update (key:Sdlkey.t) (state:state) : state =
   | Sdlkey.KEY_RIGHT -> move_player key state
   | Sdlkey.KEY_LEFT -> move_player key state
   | Sdlkey.KEY_ESCAPE -> go_on := false ; state
-  | Sdlkey.KEY_SPACE -> add_shoot state 
+  | Sdlkey.KEY_SPACE -> add_shot state 
   | _ -> state
 
 
@@ -107,10 +99,10 @@ let updates (st:state) : state =
 
 let display (pl:state) =
   G.clean () ; 
+  draw_bullets pl ;
   G.player pl.p ;
   G.delay 30 ;
   G.flip ()
-
 
 let refresh (a: state ref ) = 
   let keys = Sdlevent.get 5 in 
@@ -121,13 +113,13 @@ let refresh (a: state ref ) =
 let play () =
   let state = ref initial_state in
   while !go_on do
-    refresh state ;
     move_shots !state ; 
+    refresh state ;
+    Printf.printf "%d\n" (List.length !state.m) ;
     display !state
   done ;
   Graphics.quit ()
     
-
 let _ = play () 
 
 
