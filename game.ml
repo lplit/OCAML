@@ -9,19 +9,17 @@ type state =
     m : BoundingBox.Circle.t list
   }
   
-let print_pressed_keys (l:Sdlkey.t list) =
-  List.map (fun a -> Sdlkey.name a ) l
-    
 let cr_state x y r v  = 
   { p = Circle.create r v (Point.create x y) ;
     m = [] 
   }
     
-(* Global variables *) 
-let (mv_left:Vector.t) = Vector.create (-15.) 0.
-let (mv_right:Vector.t) = Vector.create 15. 0. 
-let (mv_down:Vector.t) = Vector.create 0. 15. 
-let (mv_up:Vector.t) = Vector.create 0. (-15.)
+(* Global variables *)
+let (click:float) = 15.
+let (mv_left:Vector.t) = Vector.create (-.click) 0.
+let (mv_right:Vector.t) = Vector.create click 0. 
+let (mv_down:Vector.t) = Vector.create 0. click 
+let (mv_up:Vector.t) = Vector.create 0. (-.click)
 let (initial_state:state) = cr_state 400. 550. 10. 10.
 let (go_on: bool ref)  = ref true
 
@@ -48,14 +46,14 @@ let clean_shots_out (state:state) : state =
     match l with 
     | [] -> acc
     | h::t ->  if c_outta_box h then 
-	loop (h::acc) t
-      else 
 	loop acc t
+      else 
+	loop (h::acc) t
   in
   let new_shots = loop [] state.m in 
   let a = { p=state.p ; m=new_shots } in
-  a 
-    
+  a
+
 (* Moves all the shots within the drawbox *)
 let move_shots (state:state) : state = 
   let newp = clean_shots_out state in
@@ -68,9 +66,15 @@ let draw_bullets (player:state) : unit =
   List.iter G.bullet newp.m
 
 let move_player (key:Sdlkey.t) (state:state) : state = 
-  if c_outta_box state.p then
-    match state.p with
-      
+  let cen = state.p.o in
+  if cen.x > (800. -. click) then 
+    state
+  else if cen.x < click then
+    state
+  else if cen.y > (600. -. click) then
+    state
+  else if cen.y < click then
+    state      
   else 
     match key with
     | Sdlkey.KEY_UP -> let (a:state)={p=Circle.move mv_up state.p ; m=state.m} in a
@@ -83,7 +87,7 @@ let move_player (key:Sdlkey.t) (state:state) : state =
 (* if key pressed = move key then call move_player, 
    ignore rest, escape quits, space shoots *)
 let update (key:Sdlkey.t) (state:state) : state =
-  match key with 
+  match key with
   | Sdlkey.KEY_UP -> move_player key state
   | Sdlkey.KEY_DOWN -> move_player key state
   | Sdlkey.KEY_RIGHT -> move_player key state
