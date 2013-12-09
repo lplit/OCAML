@@ -67,13 +67,10 @@ let draw_bullets (player:state) : unit =
 
 let move_player (key:Sdlkey.t) (state:state) : state = 
   let cen = state.p.o in
-  if cen.x > (800. -. click) then 
-    state
-  else if cen.x < click then
-    state
-  else if cen.y > (600. -. click) then
-    state
-  else if cen.y < click then
+  if cen.x > (800. -. click) 
+    || cen.x < click 
+    || cen.y > (600. -. click) 
+    || cen.y < click then
     state      
   else 
     match key with
