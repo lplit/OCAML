@@ -20,7 +20,7 @@ let (mv_left:Vector.t) = Vector.create (-.click) 0.
 let (mv_right:Vector.t) = Vector.create click 0. 
 let (mv_down:Vector.t) = Vector.create 0. click 
 let (mv_up:Vector.t) = Vector.create 0. (-.click)
-let (initial_state:state) = cr_state 400. 550. 10. 10.
+let (initial_state:state) = cr_state 400. 500. 10. 5.
 let (go_on: bool ref)  = ref true
 
 
@@ -28,7 +28,7 @@ let (go_on: bool ref)  = ref true
 
 (* Adds new shoot to the list, coords: actual coords of ship *)
 let add_shot (state:state) : state = 
-  let (c:Circle.t)=Circle.create 5. 5. state.p.o in 
+  let (c:Circle.t)=Circle.create 2. 1. state.p.o in 
   match state.m with 
   | [] -> let a = {p=state.p ; m=[c] } in a
   | _ -> 
@@ -45,7 +45,7 @@ let clean_shots_out (state:state) : state =
   let rec loop acc l = 
     match l with 
     | [] -> acc
-    | h::t ->  if c_outta_box h then 
+    | h::t ->  if c_outta_box h (* || Circle.collide_with_any_of h state.en *) then 
 	loop acc t
       else 
 	loop (h::acc) t
@@ -55,23 +55,26 @@ let clean_shots_out (state:state) : state =
   a
 
 (* Moves all the shots within the drawbox *)
-let move_shots (state:state) : state = 
+let move_shots (state:state) : state =
   let newp = clean_shots_out state in
-  let shots = List.map (fun a -> Circle.move mv_up a) newp.m in 
-  let a = {p=state.p ; m=shots} in 
+  let shots = List.map (fun a -> Circle.move mv_up a) newp.m in
+  let a = {p=state.p ; m=shots} in
   a
 
+(* Shows all the missiles on the screen *) 
 let draw_bullets (player:state) : unit = 
-  let newp = move_shots player in 
-  List.iter G.bullet newp.m
+  List.iter G.bullet player.m
 
 let move_player (key:Sdlkey.t) (state:state) : state = 
   let cen = state.p.o in
-  if cen.x > (800. -. click) 
-    || cen.x < click 
-    || cen.y > (600. -. click) 
-    || cen.y < click then
-    state      
+  if cen.x >= (780. -. click) then 
+    let (a:state)={p=Circle.move mv_left state.p ; m=state.m} in a
+  else if cen.x <= click then
+    let (a:state)={p=Circle.move mv_right state.p ; m=state.m} in a 
+  else if cen.y >= (530. -. click) then 
+    let (a:state)={p=Circle.move mv_up state.p ; m=state.m} in a
+  else if cen.y <= click then
+    let (a:state)={p=Circle.move mv_down state.p ; m=state.m} in a 
   else 
     match key with
     | Sdlkey.KEY_UP -> let (a:state)={p=Circle.move mv_up state.p ; m=state.m} in a
@@ -81,8 +84,7 @@ let move_player (key:Sdlkey.t) (state:state) : state =
     | _ -> state
       
       
-(* if key pressed = move key then call move_player, 
-   ignore rest, escape quits, space shoots *)
+(* Manages keypresses *)
 let update (key:Sdlkey.t) (state:state) : state =
   match key with
   | Sdlkey.KEY_UP -> move_player key state
@@ -94,7 +96,7 @@ let update (key:Sdlkey.t) (state:state) : state =
   | _ -> state
 
 
-(* gets all the pressed keys (Sdlevent.event list) , calls update on all the keys *)
+(* Executes keyboard input *)
 let updates (st:state) : state = 
   let keys_p = Events.get_keys () in
   List.fold_left (fun acc k -> update k acc) st keys_p
@@ -110,14 +112,13 @@ let display (pl:state) =
 let refresh (a: state ref ) = 
   let keys = Sdlevent.get 5 in 
   Events.updates keys ; 
-  a := updates !a
-
+  a := updates !a ;
+  a := move_shots !a
 
 let play () =
   let state = ref initial_state in
   while !go_on do
     refresh state ;
-    Printf.printf "%d\n" (List.length !state.m) ;
     display !state
   done ;
   Graphics.quit ()
